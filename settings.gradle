@@ -1,2 +1,3 @@
+include ':molelibrary'
 include ':app'
 rootProject.name = "MoleLib"
