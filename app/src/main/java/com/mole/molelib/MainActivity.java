@@ -1,15 +1,23 @@
 package com.mole.molelib;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
+import android.os.Message;
 import android.view.View;
 import android.widget.TextView;
 
 import com.mole.molelibrary.LibListener;
 import com.mole.molelibrary.LibManager;
 import com.mole.molelibrary.LibCallBack;
+import com.mole.molelibrary.message.MsgBaseHandler;
+import com.mole.molelibrary.message.MsgHandlerCenter;
+
+import java.lang.ref.WeakReference;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,7 +35,43 @@ public class MainActivity extends AppCompatActivity {
 
         //注册
         LibManager.getInstance().registerListener(listener, callBack);
+
+        MsgHandlerCenter.registerMessageHandler(new LocalHandler(this));
     }
+
+    private static class LocalHandler extends MsgBaseHandler {
+        private final WeakReference<Activity> reference;
+
+        public LocalHandler(Activity activity) {
+            super();
+            reference = new WeakReference<>(activity);
+        }
+
+        public LocalHandler(Looper looper, Activity activity) {
+            super(looper);
+            reference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void careAbout() {
+            addMsg(1);
+            addMsg(2);
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            if (reference.get() != null) {
+                switch (msg.what) {
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                }
+            }
+        }
+    }
+
 
     @Override
     protected void onDestroy() {
